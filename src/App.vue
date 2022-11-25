@@ -24,6 +24,7 @@ export default{
 html{
   background-color: #2B2E4A;
   color: lightgrey;
+  z-index: 1;
   
   
   /* error color  #CF6679 */
