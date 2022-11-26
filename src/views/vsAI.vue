@@ -1,9 +1,9 @@
 <template>
-  <header>VS AI</header>
-  <div v-if="yourParty.length > 0">
-    <strong>Your Party</strong>
+  <strong>VS AI party</strong> 
+  <div v-if="opponentParty.length > 0">
+    
     <div class="pokeCard-wrapper">
-      <template v-for="(pokemon, i) in yourParty" :key="i" >
+      <template v-for="(pokemon, i) in opponentParty" :key="i" >
         <div class="pokeCard">
           <!-- <div class="background-left background" :style="getBorderColor(pokemon,0)"></div>
           <div class="background-top background" :style="getBorderColor(pokemon,1)"></div>
@@ -16,12 +16,21 @@
             <br>
             <div style="" class="button-wrapper">
               <div>
-                <button @click="pokemon.showingStatus = true" type="button" class="btn btn-dark btn-xs" style="background-color: grey">詳細</button>
-              </div>
-              <div>
-                <button @click="pokemon.shiny = !pokemon.shiny" type="button" class="btn  btn-xs shiny-pic btn-warning pt-0 px-0" :style="[pokemon.shiny? 'background-color: grey' : '']">Shiny</button>
+                <button @click="pokemon.showingStatus = true" type="button" class="button" >詳細</button>
               </div>
             </div>
+
+            <span>
+              {{JapaneseNameList[(pokemon.id)]}}
+              <section class="type-wrapper">
+                <template v-for="(item,j) in pokemon.types" :key="j">
+                  <div style="">
+                    <a href="#" class="type-badge" :style="`background-color:${typeNameList[item.type.name]?.color}`">{{typeNameList[item.type.name]?.name}}</a>
+
+                  </div>
+                </template>
+              </section>
+            </span>
             
           </section>
 
@@ -48,35 +57,96 @@
 
             </div>
 
-            <hr style="width:70%; margin: -5px auto 5px" >
-            <div>
-              
-            </div>
+            
 
             
             
           </section>
 
-          <span>
-            {{JapaneseNameList[(pokemon.id)]}}
-            <section class="type-wrapper">
-              <template v-for="(item,j) in pokemon.types" :key="j">
-                <div style="">
-                  <a href="#" class="badge badge-primary" :style="`background-color:${typeNameList[item.type.name]?.color}`">{{typeNameList[item.type.name]?.name}}</a>
-
-                </div>
-              </template>
-            </section>
-          </span>
+          
           
         </div>
 
-        <div crlass="line-break" v-if="i % 2 == 0"></div>
+        <div class="line-break" v-if="(i+1) % 3 == 0"></div>
         
       </template>
     </div>
 
   </div>
+
+  <div v-if="yourParty.length > 0">
+    <strong>Your Party</strong>
+    <div class="pokeCard-wrapper">
+      <template v-for="(pokemon, i) in yourParty" :key="i" >
+        <div class="pokeCard">
+
+          <section v-if="!pokemon.showingStatus">
+            <!-- <img  :src="getPokeImg(pokemon)" :style="getImgSize()" alt=""> -->
+            <img :src="[pokemon.shiny ?  pokemon.sprites.other.home.front_shiny: pokemon.sprites.other.home.front_default] " alt="">
+            <br>
+            <div style="" class="button-wrapper">
+              <div>
+                <button @click="pokemon.showingStatus = true" type="button" class="button" >詳細</button>
+              </div>
+              <div>
+                <button @click="pokemon.shiny = !pokemon.shiny" type="button" class="button  " :style="[pokemon.shiny? '' : 'border: 2px solid Goldenrod']">色違</button>
+              </div>
+            </div>
+
+            <span>
+              {{JapaneseNameList[(pokemon.id)]}}
+              <section class="type-wrapper">
+                <template v-for="(item,j) in pokemon.types" :key="j">
+                  <div style="">
+                    <a href="#" class="type-badge" :style="`background-color:${typeNameList[item.type.name]?.color}`">{{typeNameList[item.type.name]?.name}}</a>
+
+                  </div>
+                </template>
+              </section>
+            </span>
+            
+          </section>
+
+          <section v-else>
+            <div class="base-stats" style="font-size: 85%">
+              <div class="stats">HP {{pokemon.stats[0].base_stat}}</div>
+              <div class="stats">攻撃 {{pokemon.stats[1].base_stat}}</div>
+              <div crlass="line-break"></div>
+              <div class="stats">防御 {{pokemon.stats[2].base_stat}}</div>
+              <div class="stats">特攻 {{pokemon.stats[3].base_stat}}</div>
+              <div crlass="line-break"></div>
+              <div class="stats">特防 {{pokemon.stats[4].base_stat}}</div>
+              <div class="stats">素早 {{pokemon.stats[5].base_stat}}</div>
+              <div class="stats" style="width: 100%" >合計 {{statsSum[i]}}</div>
+              <div style="" class="button-wrapper">
+                <div class="stats" >
+                  <button @click="pokemon.showingStatus= !pokemon.showingStatus"  class="btn btn-danger btn-xs">戻る</button>
+                </div>
+                <div>
+                  <button type="button" class="btn btn-success btn-xs pt-0 px-0">進化</button>
+                </div>
+              </div>
+              
+
+            </div>
+
+            
+
+            
+            
+          </section>
+
+         
+          
+        </div>
+
+        <div class="line-break" v-if="(i+1) % 3 == 0"></div>
+        
+      </template>
+    </div>
+
+  </div>
+
 </template>
 
 <script>
@@ -92,6 +162,9 @@ export default{
       typeNameList,
 
       yourParty: [],
+      opponentParty: [],
+
+      progressNum: 0,
     }
   },
 
@@ -150,33 +223,56 @@ export default{
     },
     async getSix(){
       
-
       let count = 0
-      // let list =[]
+      let list =[]
       while(count < 6){
         let num = Math.floor(Math.random() * (this.maxIndex -1)) +1
         let URL = `https://pokeapi.co/api/v2/pokemon/${num}`
         let res = await fetch(URL)
         let json = await res.json()
-        this.yourParty.push(json)
+        list.push(json)
         count++
       }
-      // console.log(list)
-      // this.yourParty = list
 
-      for(let i in this.yourParty){
+      for(let i in list){
         let num = (Math.random() * 100)
 
-        let pokemon = this.yourParty[i]
+        let pokemon = list[i]
         pokemon.shiny = false
         pokemon.showingStatus = false
         if(num < 5) pokemon.shiny = true
       }
 
-      for(let i in this.yourParty){
-        let pokemon = this.yourParty[i]
-        console.log(pokemon)
+      this.yourParty = list
+
+      // --------------------------------------------
+
+      count = 0
+      list = []
+      while(count < 6){
+        let num = Math.floor(Math.random() * (this.maxIndex -1)) +1
+        let URL = `https://pokeapi.co/api/v2/pokemon/${num}`
+        let res = await fetch(URL)
+        let json = await res.json()
+        list.push(json)
+        count++
       }
+
+      for(let i in list){
+        let num = (Math.random() * 100)
+
+        let pokemon = list[i]
+        pokemon.shiny = false
+        pokemon.showingStatus = false
+        if(num < 5) pokemon.shiny = true
+      }
+
+      this.opponentParty = list
+
+      this.progressNum = 1
+
+
+
 
     },
   },
@@ -216,8 +312,8 @@ export default{
 .pokeCard-wrapper{
   display: flex;
   flex-flow: row wrap;
-  justify-content: space-between;
-  width: 90vw;
+  justify-content: space-around;
+  width: 95vw;
   margin: 0 auto;
   
   border-radius: 10px;
@@ -274,19 +370,36 @@ export default{
   
   border: 2px solid darkgrey;
   /* background-color: lightgray; */
-  margin: 7px  0;
+  margin: 4px auto;
   /* color:black; */
-  aspect-ratio: 10/11;
-  width: 46.5%;
+  aspect-ratio: 10/13.5;
+  width: 31%;
   position: relative;
 }
 
 .button-wrapper{
-  width: 80%;
+  width: 90%;
   justify-content:
   space-around;
   display:flex;
-  margin: 5px auto;
+  margin: 0px auto;
+}
+
+.button-wrapper button{
+  background-color: inherit;
+  /* background-color: ; */
+  border: none;
+  color: white;
+  padding: 2px 3px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 100%;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 5px;
+
+  border: 2px solid grey;
 }
 
 .pokeCard span{
@@ -299,13 +412,19 @@ export default{
   font-size: 95%;
 }
 
+.pokeCard .type-badge{
+  color:white;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 100%;
+  font-weight: bold;
+}
+
 .type-wrapper{
-  width: 60%;
+  width: 70%;
   justify-content:space-around;
   display:flex;
   margin: 5px auto;
-  font-size: 80%;
-  color:red;
 }
 
 
