@@ -372,7 +372,7 @@ export default{
   /* background-color: lightgray; */
   margin: 4px auto;
   /* color:black; */
-  aspect-ratio: 10/13.5;
+  aspect-ratio: 10/13;
   width: 31%;
   position: relative;
 }
@@ -394,8 +394,8 @@ export default{
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 100%;
-  margin: 4px 2px;
+  font-size: 85%;
+  margin: 2px 2px;
   cursor: pointer;
   border-radius: 5px;
 
