@@ -1,4 +1,5 @@
 <template>
+  <div style="margin: 10px"></div>
   <strong>VS AI party</strong> 
   <div v-if="opponentParty.length > 0">
     
