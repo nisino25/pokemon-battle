@@ -1,5 +1,5 @@
 <template>
-  <router-link to="/vsAI">AI</router-link>
+  <a href="/vsAI" class="nav-item" data-color="#446A46" >VS AI</a>
   <div class="home">
     
     <img alt="Vue logo" src="../assets/logo.png">

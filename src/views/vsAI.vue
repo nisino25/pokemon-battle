@@ -269,7 +269,7 @@ export default{
       }
 
       this.opponentParty = list
-
+ 
       this.progressNum = 1
 
 
