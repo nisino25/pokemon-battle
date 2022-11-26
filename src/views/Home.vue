@@ -1,5 +1,7 @@
 <template>
+  <router-link to="/vsAI">AI</router-link>
   <div class="home">
+    
     <img alt="Vue logo" src="../assets/logo.png">
     <HelloWorld msg="Welcome to Your Vue.js App"/>
   </div>
