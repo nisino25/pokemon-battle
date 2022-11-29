@@ -419,23 +419,26 @@
     <div class="battle-controller">
 
       <section v-if="showingController">
-        <div :class="buttonClass[0]" class="top-half" @click="toggleClass('fight')" >
-          <span class="fight">FIGHT!</span>
-        </div>
+        <div class="pokeball">
 
-        <div class="center-circle">
-          <div class="inner-circle"></div>
-        </div>
-
-        <div class="bottom-half">
-          <div :class="buttonClass[1]" class="bag-button" @click="toggleClass('bag')">
-            <span class="button-label">BAG</span>
+          <div class="top-half" :class="buttonClass[0]"  @click="toggleClass('fight')" >
+            <span class="fight">FIGHT!</span>
           </div>
-          <div :class="buttonClass[2]" class="run-button" @click="toggleClass('run')" >
-            <span class="button-label">RUN</span>
+  
+          <div class="center-circle">
+            <div class="inner-circle"></div>
           </div>
-          <div :class="buttonClass[3]" class="pokemon-button" @click="toggleClass('pokemon')">
-            <span class="button-label">Poke</span>
+  
+          <div class="bottom-half">
+            <div :class="buttonClass[1]" class="bag-button" @click="toggleClass('bag')">
+              <span class="button-label">BAG</span>
+            </div>
+            <div :class="buttonClass[2]" class="run-button" @click="toggleClass('run')" >
+              <span class="button-label">RUN</span>
+            </div>
+            <div :class="buttonClass[3]" class="pokemon-button" @click="toggleClass('pokemon')">
+              <span class="button-label">Poke</span>
+            </div>
           </div>
         </div>
       </section>
@@ -623,14 +626,14 @@
             this.buttonClass[0] = ''
             break;
 
-            case 'bag':
+          case 'bag':
             this.buttonClass[1] = 'leftBounce'
             await this.sleep(500)
             this.buttonClass[1] = ''
             break;
 
           case 'run':
-            this.buttonClass[2] = 'miniBounce'
+            this.buttonClass[2] = 'centerBounce'
             await this.sleep(500)
             this.buttonClass[2] = ''
             break;
@@ -641,6 +644,24 @@
             this.buttonClass[3] = ''
             break;
         }
+      },
+
+      getBorderRadius(name){
+        console.log(name)
+        let text = 'color: white'
+        return text
+        // return `border-radius: 150px 150px 0 0;`
+        // await this.sleep(100)
+        // let div = document.getElementById('top-half');
+        // console.log(div)
+        // let width = div.clientWidth
+        // console.log(width)
+
+        
+        // return 'border-radius', `${width}px ${width}px 0 0;`
+        // return `border-radius: 150px 150px 0 0;`
+
+        // return 'border-radius: 510% 50% 0 0;'
       },
 
 
@@ -926,6 +947,12 @@
       
     },
     watch:{
+      // progressNum(){
+      //   if(this.progressNum == 4){
+      //     this.getBorderRadius()
+      //   }
+      // }
+
       // opponentFightingPokemon(){
       //   if(!this.opponentFightingPokemon) return
       //   console.log(`HP: ${this.opponentFightingPokemon?.remainingHP}`)
@@ -1319,24 +1346,37 @@
 
   /* ---------------------------------------------------- */
 
-  .top-half  {
+  .pokeball{
     position: absolute;
     top: 0;
     left: 50%;
     transform: translateX( -50%);
-    aspect-ratio: 2/1;
-    height: 50%;
-    border-radius: 150px 150px 0 0;
-    background-color: Crimson;
+    aspect-ratio: 1/1;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 50%;
     border: 8px solid black;
-    z-index: 10;
-
-    /* display: inline-block; */
+    overflow: hidden;
 
     -moz-box-shadow: 11px 13px 25px -6px rgba(0, 0, 0, 0.8);
     -webkit-box-shadow: 11px 13px 25px -6px rgba(0, 0, 0, 0.8);
     -ms-box-shadow: 11px 13px 25px -6px rgba(0, 0, 0, 0.8);
     box-shadow: 11px 13px 25px -6px rgba(0, 0, 0, 0.8);
+  }
+
+  .top-half  {
+    position: absolute;
+    top: -50%;
+    left: -25%;
+    width: 150%;
+    height: 100%;
+    background-color: Crimson;
+    border-bottom: 10px solid black;
+    z-index: 10;
+
+    /* display: inline-block; */
+
+    
   }
 
   .center-circle{
@@ -1351,7 +1391,6 @@
     border: 10px solid black;
     border-radius: 50%;
   }
-
   .inner-circle{
     z-index: 2;
     position: absolute;
@@ -1365,30 +1404,26 @@
     border-radius: 50%;
   }
 
-
   .bottom-half  {
     position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX( -50%);
-    aspect-ratio: 2/1;
-    height: 50%;
+    bottom: -50%;
+    left: 0%;
+    width: 100%;
+    height: 100%;
+    /* aspect-ratio: 2/1; */
+    /* height: 50%; */
     border-radius: 0px 0px 150px 150px;
     background-color: white;
-    border: 8px solid black;
+    border-bottom: 10px solid black;
     z-index: 10;
 
     overflow: hidden;
 
-    -moz-box-shadow: 11px 13px 25px -6px rgba(0, 0, 0, 0.8);
-    -webkit-box-shadow: 11px 13px 25px -6px rgba(0, 0, 0, 0.8);
-    -ms-box-shadow: 11px 13px 25px -6px rgba(0, 0, 0, 0.8);
-    box-shadow: 11px 13px 25px -6px rgba(0, 0, 0, 0.8);
   }
 
   .fight{
     position: absolute;
-    top: 50%;
+    bottom: 15%;
     left: 50%;
     transform: translate(-50%, -50%);
 
@@ -1399,21 +1434,19 @@
 
   .bag-button{
     position: absolute;
-    top: 35%;
-    left: 0%;
+    top: 15%;
+    left: -10%;
     transform: skew(-20deg);
     /* transform: translateX(-50%); */
     width: 25%;
     height: 100%;
     background-color:Silver;
     border: 8px solid black;
-
-    
   }
 
   .run-button{
     position: absolute;
-    top: 55%;
+    top: 30%;
     left: 50%;
     transform: translateX(-50%);
     width: 25%;
@@ -1424,8 +1457,8 @@
 
   .pokemon-button{
     position: absolute;
-    top: 35%;
-    right: 0%;
+    top: 15%;
+    right: -10%;
     transform: skew(20deg);
     /* transform: translateX(-50%); */
     width: 25%;
@@ -1443,13 +1476,13 @@
 
   @keyframes press {
     0% {
-      transform: scale(1) translate(-50%);
+      transform: scale(1) 
     }
     50% {
-      transform: scale(0.96) translate(-51%);
+      transform: scale(0.96) translate(0%,3%)
     }
     to {
-      transform: scale(1) translate(-50%);
+      transform: scale(1)
     }
   }
 
@@ -1462,6 +1495,18 @@
     }
     to {
       transform: scale(1) skew(-20deg);
+    }
+  }
+
+  @keyframes centerPress {
+    0% {
+      transform: scale(1) translateX(-50%);;
+    }
+    50% {
+      transform: scale(0.94)translateX(-50%); ;
+    }
+    to {
+      transform: scale(1) translateX(-50%);;
     }
   }
 
@@ -1484,6 +1529,11 @@
   .leftBounce{
     animation: leftPress 0.4s ease-in-out; 
   }
+  
+  .centerBounce{
+    animation: centerPress 0.4s ease-in-out; 
+  }
+  
 
   .rightBounce{
     animation: rightPress 0.4s ease-in-out; 
