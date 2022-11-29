@@ -417,24 +417,67 @@
     </div>
 
     <div class="battle-controller">
-      <button style="background-color:crimson" @click="test()">test attack</button><br>
-      <template v-for="(pokemon,i) in opponentParty" :key="i" style="font-size: 50%; ">
-        <span :style="[pokemon.isFightingNow? 'color:crimson' :'']">{{pokemon.id}}. {{JapaneseNameList[pokemon.id]}}</span> <strong v-if="pokemon.selected" style="color: yellow">!</strong>&nbsp;
-        <!-- <small>{{getFightingImg(pokemon,true)}}</small> -->
-        <br>
-      </template>
-      <hr>
-      <template v-for="(pokemon,i) in myParty" :key="i" style="font-size: 50%">
-        <span :style="[pokemon.isFightingNow? 'color:crimson' :'']">{{pokemon.id}}. {{JapaneseNameList[pokemon.id]}}</span> <strong v-if="pokemon.selected" style="color: yellow">!</strong> &nbsp;
-        <!-- <small>{{getFightingImg(pokemon,true)}}</small> -->
-        <br>
-      </template>
+
+      <section v-if="showingController">
+        <div :class="buttonClass[0]" class="top-half" @click="toggleClass('fight')" >
+          <span class="fight">FIGHT!</span>
+        </div>
+
+        <div class="center-circle">
+          <div class="inner-circle"></div>
+        </div>
+
+        <div class="bottom-half">
+          <div :class="buttonClass[1]" class="bag-button" @click="toggleClass('bag')">
+            <span class="button-label">BAG</span>
+          </div>
+          <div :class="buttonClass[2]" class="run-button" @click="toggleClass('run')" >
+            <span class="button-label">RUN</span>
+          </div>
+          <div :class="buttonClass[3]" class="pokemon-button" @click="toggleClass('pokemon')">
+            <span class="button-label">Poke</span>
+          </div>
+        </div>
+      </section>
+
+      <section v-else>
+        <div class="other-pokemons" v-if="controllerMenu == 'pokemon'">
+          <div class="left">
+            <strong class="statement">あなたのポケモン</strong>
+            <div>
+              <template v-for="(pokemon,i) in mySelectedParty" :key="i" >
+                <div class="myPokemon" :style="`top:${25 * (i+1)}%;`" >
+                  <img :src="getIcon(pokemon)" alt="">
+                  <div class="bottom-bar">
+                    <div class="HP-bar-container">
+
+                      <div class="HP-bar" :style="getHPstyle(pokemon)">
+                        <!-- <div class="HP-bar" style="width: 20%"> -->
+                      </div>
+
+                      
+                    </div>
+
+
+                  </div>
+
+                </div>
+                <!-- <span>{{pokemon}}</span> -->
+                <!-- <br> -->
+              </template>
+            </div>
+          </div>
+          <!-- <div class="right"></div> -->
+        </div>
+      </section>
+
+
+      <!-- 
+      <button style="background-color:crimson;position: absolute; bottom: 0" @click="test()">test attack</button><br> -->
       
     </div>
 
   </section>
-
-
   
 
 </template>
@@ -458,9 +501,12 @@
         opponentParty: [],
 
         progressNum: 0,
+        showingController: true,
+        controllerMenu: '',
+
+        buttonClass: ['','','','',],
       }
     },
-
     methods:{
       sleep(ms) {
         return new Promise((resolve) => {
@@ -543,6 +589,10 @@
         }
 
       },
+      getIcon(pokemon){
+        // console.log(pokemon.sprites.versions['generation-viii'].icons.front_default)
+        return pokemon.sprites.versions['generation-viii'].icons.front_default
+      },
 
       getHPstyle(pokemon){
         let percent = (pokemon.remainingHP/pokemon.maxHP) * 100
@@ -562,6 +612,35 @@
         let style = `width: ${percent}%; background:${color};`
 
         return style
+      },
+
+      async toggleClass(name){
+        switch(name){
+
+          case 'fight':
+            this.buttonClass[0] = 'miniBounce'
+            await this.sleep(500)
+            this.buttonClass[0] = ''
+            break;
+
+            case 'bag':
+            this.buttonClass[1] = 'leftBounce'
+            await this.sleep(500)
+            this.buttonClass[1] = ''
+            break;
+
+          case 'run':
+            this.buttonClass[2] = 'miniBounce'
+            await this.sleep(500)
+            this.buttonClass[2] = ''
+            break;
+
+          case 'pokemon':
+            this.buttonClass[3] = 'rightBounce'
+            await this.sleep(500)
+            this.buttonClass[3] = ''
+            break;
+        }
       },
 
 
@@ -592,9 +671,9 @@
         let list =[]
         while(count < 6){
           let num = Math.floor(Math.random() * (this.maxIndex -1)) +1
-          if(this.developing){
-            num=  Math.floor(Math.random() * 250) +650
-          }
+          // if(this.developing){
+          //   num=  Math.floor(Math.random() * 250) +650
+          // }
           let URL = `https://pokeapi.co/api/v2/pokemon/${num}`
           let res = await fetch(URL)
           let json = await res.json()
@@ -618,6 +697,7 @@
         }
 
         this.opponentParty = list
+        // console.log(list)
 
         count = 0
 
@@ -702,8 +782,8 @@
       },
       
       async skip(){
-        while(this.myParty.length < 6){
-          await this.sleep(1500)
+        while(this.opponentParty.length < 6){
+          await this.sleep(500)
         }
         let  count = 0
         let fightingPokemon
@@ -721,7 +801,6 @@
         
         // list[num].isFightingNow = true
 
-        console.log(this.myFightingPokemon.sprites)
 
 
 
@@ -747,7 +826,7 @@
 
       // ----------------------------
       test(){
-        this.opponentFightingPokemon.remainingHP-= 25
+        this.myFightingPokemon.remainingHP-= 25
       },
 
 
@@ -797,7 +876,6 @@
 
         return false
       },
-
       opponentFightingPokemon(){
         if(this.opponentParty.length < 1) return false
         for(let i in this.opponentParty){
@@ -807,7 +885,8 @@
         }
 
         return false
-      },    
+      }, 
+
 
       canProgress(){
         if(this.progressNum == 2){
@@ -1009,11 +1088,13 @@
     position: absolute;
     width: 100vw;
     height: 50vh;
-    top: 50vh;
+    top: 47.5vh;
     left: 0;
-    border: 5px solid darkgreen;
 
-    /* z-index: 101; */
+
+    /* border: 5px solid darkgreen; */
+
+    z-index: 100;
   }
 
   .opponentPokemon-stats{
@@ -1071,12 +1152,13 @@
   .stats-container{
     background-color: lightgrey;
     width: 90%;
-    height: 60%;
+    padding: 5px auto;
+    /* height: 75px; */
     font-size: 80%;
     border-radius: 4px;
 
     position: absolute;
-    top: 5%;
+    top: 10%;
     left: 50%;
 
     transform: translateX(-50%);
@@ -1152,6 +1234,261 @@
     text-align:left;
     margin: auto 5%;
   }
+
+
+
+
+  .other-pokemons{
+    /* background-color: black; */
+    /* z-index:200; */
+    position: absolute;
+    width:100%;
+    height: 50%;
+    display: flex;
+  }
+
+  .other-pokemons .left{
+    /* display: block; */
+    position: relative;
+    width: 50%;
+    position: absolute;
+    height: 100%;
+    /* background-color: blue; */
+    top: 0;
+    /* height: 100%; */
+    /* padding: 20px auto; */
+    /* height: 20px; */
+    /* background-color: red; */
+    /* border: 2px solid red; */
+  }
+
+  .other-pokemons .left .myPokemon{
+    /* display: block; */
+    position: absolute;
+    width: 100%;
+    height: 25%;
+    border: 1px solid yellow;
+  }
+
+  .other-pokemons .myPokemon img{
+    position: absolute;
+    left: 0;
+    top: -8px;
+    /* transform: translateY(-50%); */
+    /* text-align: center; */
+    height: 100%;
+    width: auto;
+
+    /* background-color: red; */
+
+    
+  }
+
+  .other-pokemons  .HP-bar-container{
+    width: 60%;
+    margin: auto 30% 0px;
+    background-color: DarkGray;
+
+  }
+
+  .other-pokemons .HP-bar {
+    /* width: 90%;/ */
+    margin: .5em 0;
+    border: 5px solid darken(#3D8361, 25%);
+    border-radius: 0px;
+    list-style: none;
+    overflow: hidden;
+
+    color: #D6CDA4;
+    position: relative;
+    height: 1.4em;
+    /* background: #3D8361; */
+    /* font-size: 1.2em; */
+    transition: width 2s;
+    /* transition-delay: 1s; */
+    
+  }
+
+  .other-pokemons .right{
+    width: 50%;
+    padding: 20px;
+    border: 2px solid red;
+    /* background-color: blue; */
+  }
+
+
+  /* ---------------------------------------------------- */
+
+  .top-half  {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX( -50%);
+    aspect-ratio: 2/1;
+    height: 50%;
+    border-radius: 150px 150px 0 0;
+    background-color: Crimson;
+    border: 8px solid black;
+    z-index: 10;
+
+    /* display: inline-block; */
+
+    -moz-box-shadow: 11px 13px 25px -6px rgba(0, 0, 0, 0.8);
+    -webkit-box-shadow: 11px 13px 25px -6px rgba(0, 0, 0, 0.8);
+    -ms-box-shadow: 11px 13px 25px -6px rgba(0, 0, 0, 0.8);
+    box-shadow: 11px 13px 25px -6px rgba(0, 0, 0, 0.8);
+  }
+
+  .center-circle{
+    z-index: 11;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate( -50%,-50%);
+    aspect-ratio: 1/1;
+    height: 25%;
+    background-color: white;
+    border: 10px solid black;
+    border-radius: 50%;
+  }
+
+  .inner-circle{
+    z-index: 2;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate( -50%,-50%);
+    aspect-ratio: 1/1;
+    height: 60%;
+    background-color: white;
+    border: 5px solid black;
+    border-radius: 50%;
+  }
+
+
+  .bottom-half  {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX( -50%);
+    aspect-ratio: 2/1;
+    height: 50%;
+    border-radius: 0px 0px 150px 150px;
+    background-color: white;
+    border: 8px solid black;
+    z-index: 10;
+
+    overflow: hidden;
+
+    -moz-box-shadow: 11px 13px 25px -6px rgba(0, 0, 0, 0.8);
+    -webkit-box-shadow: 11px 13px 25px -6px rgba(0, 0, 0, 0.8);
+    -ms-box-shadow: 11px 13px 25px -6px rgba(0, 0, 0, 0.8);
+    box-shadow: 11px 13px 25px -6px rgba(0, 0, 0, 0.8);
+  }
+
+  .fight{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    color:black;
+    font-weight: bold;
+    font-size: 25px;
+  }
+
+  .bag-button{
+    position: absolute;
+    top: 35%;
+    left: 0%;
+    transform: skew(-20deg);
+    /* transform: translateX(-50%); */
+    width: 25%;
+    height: 100%;
+    background-color:Silver;
+    border: 8px solid black;
+
+    
+  }
+
+  .run-button{
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 25%;
+    height: 100%;
+    background-color:Silver;
+    border: 8px solid black;
+  }
+
+  .pokemon-button{
+    position: absolute;
+    top: 35%;
+    right: 0%;
+    transform: skew(20deg);
+    /* transform: translateX(-50%); */
+    width: 25%;
+    height: 100%;
+    background-color:Silver;
+    border: 8px solid black;
+  }
+
+  .button-label{
+    display:block;
+    color:black;
+    font-weight: bold;
+    padding-top:10px;
+  }
+
+  @keyframes press {
+    0% {
+      transform: scale(1) translate(-50%);
+    }
+    50% {
+      transform: scale(0.96) translate(-51%);
+    }
+    to {
+      transform: scale(1) translate(-50%);
+    }
+  }
+
+  @keyframes leftPress {
+    0% {
+      transform: scale(1)  skew(-20deg);
+    }
+    50% {
+      transform: scale(0.94) skew(-20deg);
+    }
+    to {
+      transform: scale(1) skew(-20deg);
+    }
+  }
+
+  @keyframes rightPress {
+    0% {
+      transform: scale(1)  skew(20deg);
+    }
+    50% {
+      transform: scale(0.94) skew(20deg);
+    }
+    to {
+      transform: scale(1) skew(20deg);
+    }
+  }
+
+  .miniBounce {
+    animation: press 0.4s ease-in-out; 
+  }
+
+  .leftBounce{
+    animation: leftPress 0.4s ease-in-out; 
+  }
+
+  .rightBounce{
+    animation: rightPress 0.4s ease-in-out; 
+  }
+  
 
 
 
