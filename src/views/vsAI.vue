@@ -483,6 +483,35 @@
                 <!-- <br> -->
               </template>
           </div>
+
+          <div class="controller-pokemon-opponent" >
+            <span class="label">相手のポケモン</span>
+              <div class="all-opponentParty">
+                <template v-for="(pokemon,i) in opponentParty" :key="i" >
+                  <div class="each-opponentPokemon" >
+                    <img :src="getIcon(pokemon)" alt="" style="pointer-events: auto;" :class="pokemon.iconStyling" @click="chooseFightingPokemon(pokemon)">
+                    <div class="bottom-bar">
+                      <div class="HP-bar-container">
+  
+                        <div class="HP-bar" :style="getHPstyle(pokemon)">
+                          <!-- <div class="HP-bar" style="width: 20%"> -->
+                        </div>
+  
+                        
+                      </div>
+  
+  
+                    </div>
+  
+                  </div>
+  
+                  <div class="line-break" v-if="i ==2"></div>
+                  <!-- <span>{{pokemon}}</span> -->
+                  <!-- <br> -->
+                </template>
+                
+              </div>
+          </div>
           <!-- <div class="right"></div> -->
         </div>
       </section>
@@ -1546,8 +1575,13 @@
     width: 80%;
     height: auto;
   }
-
+  
   /* -------------------------------- */
+  .controller-pokemon-my span{
+    position:absolute;
+    top: -200%;
+  }
+  
   .controller-pokemon{
     /* background-color: black; */
     z-index:200;
@@ -1560,11 +1594,6 @@
 
     transform: translateX(-50%);
   }
-  .controller-pokemon-my span{
-    position:absolute;
-    top: -200%;
-  }
-
   .controller-pokemon-my{
     position: absolute;
     /* display: block; */
@@ -1631,6 +1660,78 @@
     /* transition-delay: 1s; */
     
   }
+
+
+  /* ---------------------------------------- */
+  
+  .controller-pokemon-opponent{
+    position: absolute;
+    /* display: block; */
+    width: 100%;
+    height: 100%;
+    left: 50%;
+    bottom: -60%;
+    max-width: 500px;
+    /* background-color: yellow; */
+    /* height: auto; */
+
+    transform: translateX(-50%);
+    
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .controller-pokemon-opponent span{
+    position:absolute;
+    bottom: 0%;
+    color: black;
+  }
+
+  .all-opponentParty{
+    position: absolute;
+    top: 12.5%;
+    /* display: block; */
+    width: 45%;
+    height: 30%;
+    left: -15%;
+    /* bottom: -60%; */
+    max-width: 500px;
+    display: flex;
+    justify-content: center;
+    flex-flow: row wrap;
+    
+    /* background-color: blue; */
+    /* border: 2px solid blue; */
+  }
+
+
+  .controller-pokemon-opponent .each-opponentPokemon{
+    /* background-color: blue; */
+    /* border: 2px solid blue; */
+    position: relative;
+    width:25%;
+  }
+  
+
+  .each-opponentPokemon img{
+    position: absolute;
+    /* left: 50%;
+    top: -250%; */
+    /* bottom: 0%; */
+    /* transform: translateX(-50%); */
+    /* text-align: center; */
+    height: auto;
+    width: 220%;
+
+    max-width: 300%;
+
+    /* background-color: red; */
+
+    
+  }
+
+
+
 
   .iconBounce {
     animation: iconPress 0.4s ease-in-out; 
