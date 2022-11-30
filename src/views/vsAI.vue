@@ -418,10 +418,10 @@
 
     <div class="battle-controller">
 
-      <section v-if="showingController">
+      <section style="z-index:10;">
         <div class="pokeball">
 
-          <div class="top-half" :class="buttonClass[0]"  @click="toggleClass('fight')" >
+          <div class="top-half " :class="buttonClass[0]"  @click="toggleClass('fight')" >
             <span class="fight">FIGHT!</span>
           </div>
   
@@ -443,13 +443,27 @@
         </div>
       </section>
 
-      <section v-else>
-        <div class="other-pokemons" v-if="controllerMenu == 'pokemon'">
-          <div class="left">
-            <strong class="statement">あなたのポケモン</strong>
-            <div>
+      <section v-if="showingController" style="z-index:15;">
+        <div class="pokeball">
+
+          <div class="top-half overlay">
+          </div>
+
+          <div style="pointer-events: auto; " class="center-circle overlay"   @click="toggleClass('back')">
+            <img class="back-button" src="../../public/pics/back.svg" alt="" :class="buttonClass[4]">
+            <!-- <div class="inner-circle">BACK</div> -->
+          </div>
+
+          <div class="bottom-half overlay ">
+          </div>
+        </div>
+
+        <div class="controller-pokemon overlay" v-if="controllerMenu == 'pokemon'" style="pointer-events: none;">
+          
+          <div class="controller-pokemon-my" >
+            <span class="label">あなたのポケモン</span>
               <template v-for="(pokemon,i) in mySelectedParty" :key="i" >
-                <div class="myPokemon" :style="`top:${25 * (i+1)}%;`" >
+                <div class="each-myPokemon" >
                   <img :src="getIcon(pokemon)" alt="">
                   <div class="bottom-bar">
                     <div class="HP-bar-container">
@@ -468,7 +482,6 @@
                 <!-- <span>{{pokemon}}</span> -->
                 <!-- <br> -->
               </template>
-            </div>
           </div>
           <!-- <div class="right"></div> -->
         </div>
@@ -504,10 +517,10 @@
         opponentParty: [],
 
         progressNum: 0,
-        showingController: true,
+        showingController: false,
         controllerMenu: '',
 
-        buttonClass: ['','','','',],
+        buttonClass: ['','','','','',],
       }
     },
     methods:{
@@ -639,9 +652,22 @@
             break;
 
           case 'pokemon':
+            
             this.buttonClass[3] = 'rightBounce'
             await this.sleep(500)
             this.buttonClass[3] = ''
+            this.showingController = !this.showingController
+            this.controllerMenu = 'pokemon'
+            break;
+
+          case 'back':
+            
+            this.buttonClass[4] = 'backBounce'
+            console.log('hey')
+            await this.sleep(500)
+            this.buttonClass[4] = ''
+            this.showingController = !this.showingController
+            this.controllerMenu = ''
             break;
         }
       },
@@ -1102,7 +1128,7 @@
     position: absolute;
     width: 100vw;
     height: 45vh;
-    top: 0;
+    top: 5px;
     left: 0;
 
     /* padding: 20px; */
@@ -1264,95 +1290,18 @@
 
 
 
-
-  .other-pokemons{
-    /* background-color: black; */
-    /* z-index:200; */
-    position: absolute;
-    width:100%;
-    height: 50%;
-    display: flex;
-  }
-
-  .other-pokemons .left{
-    /* display: block; */
-    position: relative;
-    width: 50%;
-    position: absolute;
-    height: 100%;
-    /* background-color: blue; */
-    top: 0;
-    /* height: 100%; */
-    /* padding: 20px auto; */
-    /* height: 20px; */
-    /* background-color: red; */
-    /* border: 2px solid red; */
-  }
-
-  .other-pokemons .left .myPokemon{
-    /* display: block; */
-    position: absolute;
-    width: 100%;
-    height: 25%;
-    border: 1px solid yellow;
-  }
-
-  .other-pokemons .myPokemon img{
-    position: absolute;
-    left: 0;
-    top: -8px;
-    /* transform: translateY(-50%); */
-    /* text-align: center; */
-    height: 100%;
-    width: auto;
-
-    /* background-color: red; */
-
-    
-  }
-
-  .other-pokemons  .HP-bar-container{
-    width: 60%;
-    margin: auto 30% 0px;
-    background-color: DarkGray;
-
-  }
-
-  .other-pokemons .HP-bar {
-    /* width: 90%;/ */
-    margin: .5em 0;
-    border: 5px solid darken(#3D8361, 25%);
-    border-radius: 0px;
-    list-style: none;
-    overflow: hidden;
-
-    color: #D6CDA4;
-    position: relative;
-    height: 1.4em;
-    /* background: #3D8361; */
-    /* font-size: 1.2em; */
-    transition: width 2s;
-    /* transition-delay: 1s; */
-    
-  }
-
-  .other-pokemons .right{
-    width: 50%;
-    padding: 20px;
-    border: 2px solid red;
-    /* background-color: blue; */
-  }
+  
 
 
   /* ---------------------------------------------------- */
 
   .pokeball{
     position: absolute;
-    top: 0;
+    top: -5px;
     left: 50%;
     transform: translateX( -50%);
     aspect-ratio: 1/1;
-    width: 90%;
+    width: 92.5%;
     max-width: 500px;
     border-radius: 50%;
     border: 8px solid black;
@@ -1522,6 +1471,19 @@
     }
   }
 
+  @keyframes backPress {
+    0% {
+      /* transform: scale(1)  ; */
+    }
+    50% {
+      /* transform: scale(0.4; */
+      width: 50%;
+    }
+    to {
+      /* transform: scale(1); */
+    }
+  }
+
   .miniBounce {
     animation: press 0.4s ease-in-out; 
   }
@@ -1533,11 +1495,129 @@
   .centerBounce{
     animation: centerPress 0.4s ease-in-out; 
   }
+
+  .backBounce{
+    animation: backPress 0.4s ease-in-out; 
+  }
   
 
   .rightBounce{
     animation: rightPress 0.4s ease-in-out; 
   }
+
+  .overlay{
+
+    /* opacity: 0; */
+    /* animation: fadein 0.5s ease-in forwards; */
+    /* animation-delay: 0.5s; */
+  }
+
+  @keyframes fadein {
+    0%   { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+ 
+  
+  .center-circle img{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-60%);
+    width: 80%;
+    height: auto;
+  }
+
+  /* -------------------------------- */
+  .controller-pokemon{
+    /* background-color: black; */
+    z-index:200;
+    position: absolute;
+    width:80%;
+    height: 50%;
+    top:0;
+    left: 50%;
+
+
+    transform: translateX(-50%);
+  }
+  .controller-pokemon-my span{
+    position:absolute;
+    top: -200%;
+  }
+
+  .controller-pokemon-my{
+    position: absolute;
+    /* display: block; */
+    width: 90%;
+    left: 50%;
+    bottom: 25%;
+    max-width: 500px;
+    /* background-color: yellow; */
+    /* height: auto; */
+
+    transform: translateX(-50%);
+    
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .controller-pokemon-my .each-myPokemon{
+    /* background-color: blue; */
+    /* border: 2px solid blue; */
+    position: relative;
+    /* position: block; */
+    width:25%;
+  }
+  
+
+  .each-myPokemon img{
+    position: absolute;
+    left: 50%;
+    top: -250%;
+    /* bottom: 0%; */
+    transform: translateX(-50%);
+    /* text-align: center; */
+    height: auto;
+    width: 200%;
+
+    max-width: 100px;
+
+    /* background-color: red; */
+
+    
+  }
+
+  .each-myPokemon  .HP-bar-container{
+    width: 100%;
+    margin: auto auto;
+    background-color: DarkGray;
+
+  }
+
+  .each-myPokemon .HP-bar {
+    /* width: 90%;/ */
+    margin: .5em 0;
+    border: 5px solid darken(#3D8361, 25%);
+    border-radius: 0px;
+    list-style: none;
+    overflow: hidden;
+
+    color: #D6CDA4;
+    position: relative;
+    height: 1.4em;
+    /* background: #3D8361; */
+    /* font-size: 1.2em; */
+    transition: width 2s;
+    /* transition-delay: 1s; */
+    
+  }
+
+  /* .controller-myPokemon .right{
+    width: 50%;
+    padding: 20px;
+    border: 2px solid red;
+  } */
   
 
 
