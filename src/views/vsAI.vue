@@ -1727,22 +1727,16 @@
     position: absolute;
     /* border: 2px solid blue; */
 
-    width: 25%;
+    width: 23%;
     height: auto;
-    top: 15%;
+    top: 23%;
     left: 12.5%;
   }
 
   
 
   .controller-pokemon-opponent .opponentPokemon-detail{
-    /* background-color: blue; */
-    /* border: 2px solid blue; */
-    /*  */
-    /* position: relative; */
-    /* position: absolute; */
-    /* top: 0%; */
-    margin-top: -10px;
+    margin-top: -15px;
     /* background-color:red; */
 
     width:100%;
