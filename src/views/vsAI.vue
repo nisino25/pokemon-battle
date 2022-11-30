@@ -486,31 +486,54 @@
 
           <div class="controller-pokemon-opponent" >
             <span class="label">相手のポケモン</span>
-              <div class="all-opponentParty">
-                <template v-for="(pokemon,i) in opponentParty" :key="i" >
-                  <div class="each-opponentPokemon" >
-                    <img :src="getIcon(pokemon)" alt="" style="pointer-events: auto;" :class="pokemon.iconStyling" @click="chooseFightingPokemon(pokemon)">
-                    <div class="bottom-bar">
-                      <div class="HP-bar-container">
-  
-                        <div class="HP-bar" :style="getHPstyle(pokemon)">
-                          <!-- <div class="HP-bar" style="width: 20%"> -->
-                        </div>
-  
-                        
+
+            <div class="selected-opponent-pokemon">
+              <template v-for="(pokemon,i) in opponentParty" :key="i" >
+                <div class="opponentPokemon-detail" v-if="i<2" >
+                  <img :src="getIcon(pokemon)" alt="" style="pointer-events: auto;" :class="pokemon.iconStyling" @click="chooseFightingPokemon(pokemon)">
+                  <div class="bottom-bar">
+                    <div class="HP-bar-container">
+
+                      <div class="HP-bar" :style="getHPstyle(pokemon)">
                       </div>
-  
-  
+
+                      
                     </div>
-  
+
+
                   </div>
-  
-                  <div class="line-break" v-if="i ==2"></div>
-                  <!-- <span>{{pokemon}}</span> -->
-                  <!-- <br> -->
-                </template>
-                
-              </div>
+
+                </div>
+                <!-- <span>{{pokemon}}</span> -->
+                <!-- <br> -->
+              </template>
+            </div>
+
+            <div class="all-opponentParty">
+              <template v-for="(pokemon,i) in opponentParty" :key="i" >
+                <div class="each-opponentPokemon" >
+                  <img :src="getIcon(pokemon)" alt="" style="pointer-events: auto;" :class="pokemon.iconStyling" @click="chooseFightingPokemon(pokemon)">
+                  <div class="bottom-bar">
+                    <div class="HP-bar-container">
+
+                      <div class="HP-bar" :style="getHPstyle(pokemon)">
+                        <!-- <div class="HP-bar" style="width: 20%"> -->
+                      </div>
+
+                      
+                    </div>
+
+
+                  </div>
+
+                </div>
+
+                <div class="line-break" v-if="i ==2"></div>
+                <!-- <span>{{pokemon}}</span> -->
+                <!-- <br> -->
+              </template>
+              
+            </div>
           </div>
           <!-- <div class="right"></div> -->
         </div>
@@ -1140,13 +1163,10 @@
 
 
 
-  img{
+  .pokeCard-wrapper img{
     margin: 5px auto 5px;
     width: 45%;
     height: auto;
-    /* width: 80px;
-    height: auto; */
-    /* max-height: 80px; */
 
   }
 
@@ -1687,13 +1707,74 @@
     color: black;
   }
 
+  .selected-opponent-pokemon{
+    position: absolute;
+    /* border: 2px solid blue; */
+
+    width: 25%;
+    height: auto;
+    top: 15%;
+    left: 12.5%;
+  }
+
+  
+
+  .controller-pokemon-opponent .opponentPokemon-detail{
+    /* background-color: blue; */
+    /* border: 2px solid blue; */
+    /*  */
+    /* position: relative; */
+    /* position: absolute; */
+    /* top: 0%; */
+    margin-top: -10px;
+    /* background-color:red; */
+
+    width:100%;
+    /* height: auto; */
+  }
+
+  .controller-pokemon-opponent .opponentPokemon-detail img{
+    /* margin: -10px; */
+    /* width: 100%; */
+    /* height: auto; */
+  }
+
+  .opponentPokemon-detail  .HP-bar-container{
+    width: 100%;
+    margin: auto auto;
+    background-color: DarkGray;
+
+  }
+
+  .opponentPokemon-detail .HP-bar {
+    /* width: 90%;/ */
+    margin: 0em 0 auto;
+    border: 5px solid darken(#3D8361, 25%);
+    border-radius: 0px;
+    list-style: none;
+    overflow: hidden;
+
+    color: #D6CDA4;
+    position: relative;
+    height: 1.4em;
+    /* background: #3D8361; */
+    /* font-size: 1.2em; */
+    transition: width 2s;
+    /* transition-delay: 1s; */
+    
+  }
+
+
+
+
+
   .all-opponentParty{
     position: absolute;
-    top: 12.5%;
+    top: 15%;
     /* display: block; */
     width: 45%;
     height: 30%;
-    left: -15%;
+    left: 48%;
     /* bottom: -60%; */
     max-width: 500px;
     display: flex;
@@ -1721,7 +1802,7 @@
     /* transform: translateX(-50%); */
     /* text-align: center; */
     height: auto;
-    width: 220%;
+    width: 200%;
 
     max-width: 300%;
 
