@@ -489,8 +489,8 @@
 
             <div class="selected-opponent-pokemon">
               <template v-for="(pokemon,i) in opponentParty" :key="i" >
-                <div class="opponentPokemon-detail" v-if="i<2" >
-                  <img :src="getIcon(pokemon)" alt="" style="pointer-events: auto;" :class="pokemon.iconStyling" @click="chooseFightingPokemon(pokemon)">
+                <div class="opponentPokemon-detail" v-if="!pokemon.isFightingNow && pokemon.hasAppeared" >
+                  <img :src="getIcon(pokemon)" alt="" style="pointer-events: auto;" :class="pokemon.iconStyling">
                   <div class="bottom-bar">
                     <div class="HP-bar-container">
 
@@ -512,7 +512,7 @@
             <div class="all-opponentParty">
               <template v-for="(pokemon,i) in opponentParty" :key="i" >
                 <div class="each-opponentPokemon" >
-                  <img :src="getIcon(pokemon)" alt="" style="pointer-events: auto;" :class="pokemon.iconStyling" @click="chooseFightingPokemon(pokemon)">
+                  <img :src="getIcon(pokemon)" alt="" style="pointer-events: auto;" :class="pokemon.iconStyling"  @click="chooseOpponentPokemon(pokemon)">
                   <div class="bottom-bar">
                     <div class="HP-bar-container">
 
@@ -939,6 +939,22 @@
         if(pokemon.isFainted) return 
 
         pokemon.isFightingNow = true
+        pokemon.hasAppeared = true
+      },
+
+      chooseOpponentPokemon(pokemon){
+        if(pokemon.species.name == this.myFightingPokemon.species.name) return
+
+        if (!confirm(`${this.JapaneseNameList[pokemon.id]}を敵として使用しますか？`)){
+          return 
+        }
+        for(let i in this.opponentParty){
+          this.opponentParty[i].isFightingNow = false
+        }
+        if(pokemon.isFainted) return 
+
+        pokemon.isFightingNow = true
+        pokemon.hasAppeared = true
       },
 
 
