@@ -464,7 +464,7 @@
             <span class="label">あなたのポケモン</span>
               <template v-for="(pokemon,i) in mySelectedParty" :key="i" >
                 <div class="each-myPokemon" >
-                  <img :src="getIcon(pokemon)" alt="">
+                  <img :src="getIcon(pokemon)" alt="" style="pointer-events: auto;" :class="pokemon.iconStyling" @click="chooseFightingPokemon(pokemon)">
                   <div class="bottom-bar">
                     <div class="HP-bar-container">
 
@@ -800,6 +800,8 @@
           pokemon.hasAppeared =  false
           pokemon.level = 50
           pokemon.isFainted = false
+
+          pokemon.iconStyling = ''
           
           pokemon.stats[0].actual_stat = pokemon.stats[0].base_stat + 75
           let i = 1
@@ -862,6 +864,23 @@
       },
 
       pickFightingPokemon(pokemon){
+        for(let i in this.myParty){
+          this.myParty[i].isFightingNow = false
+        }
+        if(pokemon.isFainted) return 
+
+        pokemon.isFightingNow = true
+      },
+
+      async chooseFightingPokemon(pokemon){
+        pokemon.iconStyling = 'iconBounce'
+        await this.sleep(500)
+        pokemon.iconStyling= ''
+        if(pokemon.species.name == this.myFightingPokemon.species.name) return
+
+        if (!confirm(`${this.JapaneseNameList[pokemon.id]}を使用しますか？`)){
+          return 
+        }
         for(let i in this.myParty){
           this.myParty[i].isFightingNow = false
         }
@@ -1551,7 +1570,7 @@
     /* display: block; */
     width: 90%;
     left: 50%;
-    bottom: 25%;
+    bottom: 40%;
     max-width: 500px;
     /* background-color: yellow; */
     /* height: auto; */
@@ -1611,6 +1630,22 @@
     transition: width 2s;
     /* transition-delay: 1s; */
     
+  }
+
+  .iconBounce {
+    animation: iconPress 0.4s ease-in-out; 
+  }
+
+  @keyframes iconPress {
+    0% {
+      transform: scale(1) translateX(-50%);
+    }
+    50% {
+      transform: scale(0.9) translate(-50%, 5%);
+    }
+    to {
+      transform: scale(1) translateX(-50%);
+    }
   }
 
   /* .controller-myPokemon .right{
