@@ -1419,7 +1419,8 @@
     left: 50%;
     transform: translate( -50%,-50%);
     aspect-ratio: 1/1;
-    height: 25%;
+    height: 90px;
+
     background-color: white;
     border: 10px solid black;
     border-radius: 50%;
@@ -1615,7 +1616,7 @@
   /* -------------------------------- */
   .controller-pokemon-my span{
     position:absolute;
-    top: -200%;
+    top: -220%;
   }
   
   .controller-pokemon{
@@ -1658,7 +1659,7 @@
   .each-myPokemon img{
     position: absolute;
     left: 50%;
-    top: -250%;
+    top: -280%;
     /* bottom: 0%; */
     transform: translateX(-50%);
     /* text-align: center; */
@@ -1689,7 +1690,7 @@
 
     color: #D6CDA4;
     position: relative;
-    height: 1.4em;
+    height: 1em;
     /* background: #3D8361; */
     /* font-size: 1.2em; */
     transition: width 2s;
@@ -1766,7 +1767,7 @@
 
     color: #D6CDA4;
     position: relative;
-    height: 1.4em;
+    height: 1em;
     /* background: #3D8361; */
     /* font-size: 1.2em; */
     transition: width 2s;
@@ -1780,7 +1781,7 @@
 
   .all-opponentParty{
     position: absolute;
-    top: 15%;
+    top: 18%;
     /* display: block; */
     width: 45%;
     height: 30%;
