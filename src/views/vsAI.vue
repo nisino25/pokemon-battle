@@ -1418,8 +1418,9 @@
     top: 50%;
     left: 50%;
     transform: translate( -50%,-50%);
-    aspect-ratio: 1/1;
+    /* aspect-ratio: 1/1; */
     height: 90px;
+    width: 90px;
 
     background-color: white;
     border: 10px solid black;
@@ -1731,7 +1732,7 @@
     width: 23%;
     height: auto;
     top: 23%;
-    left: 12.5%;
+    left: 11%;
   }
 
   
@@ -1785,7 +1786,7 @@
     /* display: block; */
     width: 45%;
     height: 30%;
-    left: 48%;
+    left: 49%;
     /* bottom: -60%; */
     max-width: 500px;
     display: flex;
