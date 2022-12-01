@@ -444,6 +444,7 @@
       </section>
 
       <section v-if="showingController" style="z-index:15;">
+
         <div class="pokeball">
 
           <div class="top-half overlay">
@@ -536,6 +537,10 @@
             </div>
           </div>
           <!-- <div class="right"></div> -->
+        </div>
+
+        <div class="" v-if="controllerMenu == 'fight'">
+          
         </div>
       </section>
 
@@ -689,6 +694,8 @@
             this.buttonClass[0] = 'miniBounce'
             await this.sleep(500)
             this.buttonClass[0] = ''
+            this.showingController = !this.showingController
+            this.controllerMenu = 'fight'
             break;
 
           case 'bag':
@@ -1432,8 +1439,9 @@
     top: 50%;
     left: 50%;
     transform: translate( -50%,-50%);
-    aspect-ratio: 1/1;
-    height: 60%;
+    /* aspect-ratio: 1/1; */
+    height: 50px;
+    width: 50px;
     background-color: white;
     border: 5px solid black;
     border-radius: 50%;
@@ -1700,7 +1708,7 @@
   }
 
 
-  /* ---------------------------------------- */
+  /* ------------------------------------------ */
   
   .controller-pokemon-opponent{
     position: absolute;
@@ -1708,7 +1716,7 @@
     width: 100%;
     height: 100%;
     left: 50%;
-    bottom: -60%;
+    bottom: -62.5%;
     max-width: 500px;
     /* background-color: yellow; */
     /* height: auto; */
