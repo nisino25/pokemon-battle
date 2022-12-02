@@ -539,7 +539,23 @@
           <!-- <div class="right"></div> -->
         </div>
 
-        <div class="" v-if="controllerMenu == 'fight'">
+        <div class="controller-fighting" v-if="controllerMenu == 'fight'">
+          <section class="moves">
+            <template v-for="(move,i) in myMoves" :key="i">
+              <div class="move" :style="getMoveStyle(i)" @click="chooseMove(move)">
+                <div class="top">
+                  {{move.type}},{{move.name}}
+                </div>
+                <div class="center">
+                  {{move.pp}}/{{move.pp}},ばつぐん
+                </div>
+                <div class="bottom">
+                   {{move.power}}, {{move.accuracy}}%
+                </div>
+              </div>
+  
+            </template>
+          </section>
           
         </div>
       </section>
@@ -559,6 +575,10 @@
   import {JapaneseNameList} from '../const/JapaneseName.js'
   import {typeNameList} from '../const/typeNameList'
 
+  import {idList} from '../const/idList'
+  import {moveList} from '../const/move'
+  import {moveLibrary} from '../const/moveLibrary'
+
   export default{
     data(){
       return{
@@ -569,6 +589,10 @@
         maxIndex: 904,
         JapaneseNameList,
         typeNameList,
+        idList,
+        moveList,
+        moveLibrary,
+
 
         myParty: [],
         opponentParty: [],
@@ -687,12 +711,32 @@
         return style
       },
 
+      getMoveStyle(i){
+        switch(i){
+          case 0:
+            return 'left: 15%;top: 17%;'
+
+          case 1:
+            return 'right: 15%;top: 17%;'
+
+          case 2:
+            return 'left: 15%; bottom: 17%;'
+
+          case 3:
+            return 'right: 15%;bottom: 17%;'
+          
+        }
+      },
+
       async toggleClass(name){
         switch(name){
 
           case 'fight':
             this.buttonClass[0] = 'miniBounce'
             await this.sleep(500)
+
+
+
             this.buttonClass[0] = ''
             this.showingController = !this.showingController
             this.controllerMenu = 'fight'
@@ -722,7 +766,7 @@
           case 'back':
             
             this.buttonClass[4] = 'backBounce'
-            console.log('hey')
+
             await this.sleep(500)
             this.buttonClass[4] = ''
             this.showingController = !this.showingController
@@ -776,7 +820,8 @@
         let count = 0
         let list =[]
         while(count < 6){
-          let num = Math.floor(Math.random() * (this.maxIndex -1)) +1
+          // let num = Math.floor(Math.random() * (this.maxIndex -1)) +1
+          let num = this.idList[Math.floor(Math.random() * this.idList.length)];
           // if(this.developing){
           //   num=  Math.floor(Math.random() * 250) +650
           // }
@@ -794,7 +839,8 @@
         count = 0
         list = []
         while(count < 6){
-          let num = Math.floor(Math.random() * (this.maxIndex -1)) +1
+          // let num = Math.floor(Math.random() * (this.maxIndex -1)) +1
+          let num = this.idList[Math.floor(Math.random() * this.idList.length)];
           let URL = `https://pokeapi.co/api/v2/pokemon/${num}`
           let res = await fetch(URL)
           let json = await res.json()
@@ -905,6 +951,7 @@
         }
 
         fightingPokemon.isFightingNow = true
+        console.log(fightingPokemon)
 
         
         // list[num].isFightingNow = true
@@ -964,6 +1011,10 @@
         pokemon.hasAppeared = true
       },
 
+      chooseMove(move){
+        this.opponentFightingPokemon.remainingHP-=move.power
+      },
+
 
       // ----------------------------
       test(){
@@ -1016,6 +1067,30 @@
         }
 
         return false
+      },
+      myMoves(){
+        if(!this.myFightingPokemon) return false
+
+        var pokemon = this.moveList.filter(obj => {
+          return obj.id === this.myFightingPokemon.id
+        })
+
+        // return pokemon[0].moves
+
+        let master =  pokemon[0].moves
+        let list = []
+        for(let i in master){
+          let move = master[i]
+          move = this.moveLibrary.filter(obj => {
+            return obj.name === master[i]
+          })
+          list.push(move[0])
+        }
+
+
+        return list
+        
+
       },
       opponentFightingPokemon(){
         if(this.opponentParty.length < 1) return false
@@ -1857,6 +1932,46 @@
   } */
   
 
+  /*fighting  moves
+  ------------------------- */
+
+  .controller-fighting .moves{
+    position:absolute;
+    left: 50%;
+    top: -5px;
+    transform: translateX( -50%);
+    aspect-ratio: 1/1;
+    width: 92.5%;
+    max-width: 500px;
+
+
+    /* border: 2px solid blue; */
+
+    pointer-events: none;
+
+
+  }
+
+  .controller-fighting .moves .move{
+    position:absolute;
+    pointer-events: auto;
+    /* left: 15%;
+    top: 17%; */
+    
+    
+
+    aspect-ratio: 20/13;
+    width: 31%;
+
+    font-size: 60%;
+
+
+    border: 2px solid yellow;
+    background-color: grey;
+    border-radius: 10px;
+    padding: 2px auto;
+
+  }
 
 
 
