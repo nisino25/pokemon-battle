@@ -278,6 +278,7 @@ export let moveLibrary = [
 {name:'じゅうでん', type: 'でんき', kind: '変化', power: 0, accuracy: 0, pp: 20, direct: '直×', canProtect: '守×', },
 {name:'10まんばりき', type: 'じめん', kind: '物理', power: 95, accuracy: 95, pp: 10, direct: '直○', canProtect: '守○', },
 {name:'10まんボルト', type: 'でんき', kind: '特殊', power: 90, accuracy: 100, pp: 15, direct: '直×', canProtect: '守○', },
+{name:'１０まんボルト', type: 'でんき', kind: '特殊', power: 90, accuracy: 100, pp: 15, direct: '直×', canProtect: '守○', },
 {name:'じゅうりょく', type: 'エスパー', kind: '変化', power: 0, accuracy: 0, pp: 5, direct: '直×', canProtect: '守×', },
 {name:'じょうか', type: 'どく', kind: '変化', power: 0, accuracy: 0, pp: 20, direct: '直×', canProtect: '守○', },
 {name:'じわれ', type: 'じめん', kind: '物理', power: 0, accuracy: 30, pp: 5, direct: '直×', canProtect: '守○', },

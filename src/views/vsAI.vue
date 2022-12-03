@@ -542,10 +542,10 @@
         <div class="controller-fighting" v-if="controllerMenu == 'fight'">
           <section class="moves">
             <template v-for="(move,i) in myMoves" :key="i" >
-              <div class="move" :style="getMoveStyle(i)" @click="chooseMove(move)" v-if="i<5">
+              <div :class="buttonClass[i+5]"  class="move" :style="getMoveStyle(i)" @click="chooseMove(move,myFightingPokemon,opponentFightingPokemon); toggleClass(`move${i}`)" v-if="i<4" >
                 <div class="move-contents">
                   <div class="top">
-                    <a href="#" class="type-badge" :style="`background-color:${typeNameList[move.type].color}`">{{move.type}}</a>{{move.name}}
+                    <a href="#" class="type-badge" :style="`background-color:${typeNameList[move.type].color}`">{{typeNameList[move.type].name}}</a>{{move.name}}
                   </div>
 
                   <div class="center">
@@ -613,7 +613,7 @@
         showingController: false,
         controllerMenu: '',
 
-        buttonClass: ['','','','','',],
+        buttonClass: ['','','','','','','','','',],
       }
     },
     methods:{
@@ -783,6 +783,41 @@
             this.buttonClass[4] = ''
             this.showingController = !this.showingController
             this.controllerMenu = ''
+            break;
+
+          case 'move0':
+            
+            this.buttonClass[5] = 'moveBounce'
+
+            await this.sleep(500)
+            this.buttonClass[5] = ''
+
+            break;
+
+          case 'move1':
+            this.buttonClass[6] = 'moveBounce'
+
+            await this.sleep(500)
+            this.buttonClass[6] = ''
+
+            break;
+
+          case 'move2':
+            
+            this.buttonClass[7] = 'moveBounce'
+
+            await this.sleep(500)
+            this.buttonClass[7] = ''
+
+            break;
+
+          case 'move3':
+            
+            this.buttonClass[8] = 'moveBounce'
+
+            await this.sleep(500)
+            this.buttonClass[8] = ''
+
             break;
         }
       },
@@ -1050,38 +1085,37 @@
         let mathing = 1
         
         if(this.compatibility[aType].strongAgainst.includes(dType)){
-          console.log('⦾こうかばつぐん')
+          // console.log('⦾こうかばつぐん')
           mathing =mathing * 2
         }else if(this.compatibility[aType].weakAgainst.includes(dType)){
-          console.log('△いまひとつ')
+          // console.log('△いまひとつ')
           mathing =mathing / 2
         }else if(this.compatibility[aType].resistantAgainst.includes(dType)){
-          console.log('こうかなし ')
+          // console.log('こうかなし ')
           return `✕こうかなし`
         }else{
-          console.log('wi')
+          // console.log('wi')
         }
-        console.log(`So far:${mathing};`)
         
 
         dType =pokemon.types[1].type.name
         // dType =/ 'dragon'
         if(this.compatibility[aType].strongAgainst.includes(dType)){
-          console.log('⦾こうかばつぐん')
+          // console.log('⦾こうかばつぐん')
           mathing =mathing * 2
         }else if(this.compatibility[aType].weakAgainst.includes(dType)){
-          console.log('△いまひとつ ')
+          // console.log('△いまひとつ ')
           mathing =mathing / 2
         }else if(this.compatibility[aType].resistantAgainst.includes(dType)){
-          console.log('こうかなし ')
+          // console.log('こうかなし ')
           return `✕こうかなし`
         }else{
-          console.log('wi')
+          // console.log('wi')
         }
 
-        console.log(mathing)
-        console.log('---------------')
-        console.log()
+        // console.log(mathing)
+        // console.log('---------------')
+        // console.log()
 
         
         if(mathing== 1){
@@ -1098,12 +1132,133 @@
         
 
       },
+      getTypeNum(move,pokemon){
+        if(pokemon.types.length == 1){
+          let aType = this.JpnToEng[move.type]?.name
+          let dType =pokemon.types[0].type.name
+          
+          if(this.compatibility[aType].strongAgainst.includes(dType)){
+            // console.log('not as much ')
+            return 2
+          }else if(this.compatibility[aType].weakAgainst.includes(dType)){
+            // console.log('super effective ')
+            return 0.5
+          }else if(this.compatibility[aType].resistantAgainst.includes(dType)){
+            return 0
+          }else{
+            return 1
+          }
+        }
+
+        // console.log(pokemon.types)
+        let aType = this.JpnToEng[move.type]?.name
+        let dType =pokemon.types[0].type.name
+        let mathing = 1
+        
+        if(this.compatibility[aType].strongAgainst.includes(dType)){
+          // console.log('⦾こうかばつぐん')
+          mathing =mathing * 2
+        }else if(this.compatibility[aType].weakAgainst.includes(dType)){
+          // console.log('△いまひとつ')
+          mathing =mathing / 2
+        }else if(this.compatibility[aType].resistantAgainst.includes(dType)){
+          // console.log('こうかなし ')
+          return 0
+        }else{
+          // console.log('wi')
+        }
         
 
-      chooseMove(move){
+        dType =pokemon.types[1].type.name
+        // dType =/ 'dragon'
+        if(this.compatibility[aType].strongAgainst.includes(dType)){
+          // console.log('⦾こうかばつぐん')
+          mathing =mathing * 2
+        }else if(this.compatibility[aType].weakAgainst.includes(dType)){
+          // console.log('△いまひとつ ')
+          mathing =mathing / 2
+        }else if(this.compatibility[aType].resistantAgainst.includes(dType)){
+          // console.log('こうかなし ')
+          return 0
+        }else{
+          // console.log('wi')
+        }
+
+        return mathing
+
+        // console.log(mathing)
+        // console.log('---------------')
+        // console.log()
+
+        
+        // if(mathing== 1){
+        //   return `○こうかあり`
+        // }else if(mathing > 1){
+        //   // console.log('not as much ')
+        //   return '⦾こうかばつぐん'
+        // }else if(mathing < 1){
+        //   // console.log('super effective ')
+        //   return `△いまひとつ`
+        // }
+      },
+        
+
+      async chooseMove(move,attacker,defender){
+        if(move.kind =='変化')return
+        let aIndex
+        let dIndex
+        if(move.kind == '物理'){
+          aIndex = 1
+          dIndex = 2
+        }else if(move.kind == '特殊'){
+          aIndex = 3
+          dIndex = 4
+        }
+        let aPokemon = attacker
+        console.log(aPokemon)
+        let dPokemon = defender
+        // if(move.)
+        await this.sleep(500)
+
+        let criticalFlag = 1
+        if(Math.random() < 0.0417){
+          criticalFlag  = 1.5
+          alert('critical hit')
+        }
+        let random = Math.floor(Math.random() * (85 - 100 + 1) + 85)
+        random = random / 100
+        let sameTypeFlag = 1
+
+        for(let j in aPokemon.types){
+          if(aPokemon.types[j].type.name == this.JpnToEng[move.type].name){
+            sameTypeFlag = 1.5
+          }
+        }
+        let num1 = Math.floor(aPokemon.level*2/5+2)
+        let num2 = Math.floor( num1 * move.power * (aPokemon.stats[aIndex].actual_stat/dPokemon.stats[dIndex].actual_stat) )
+        let num3 = Math.floor(num2/50 +2)
+        let num4 = Math.round( num3 * criticalFlag )
+        let num5 = Math.floor(num4 * random)
+        let num6 = Math.round(num5 * sameTypeFlag)
+        let num7 = Math.floor(num6 * this.getTypeNum(move,dPokemon))
+
+        console.log(`1: ${num1}`)
+        console.log(`2: ${num2}`)
+        console.log(`3: ${num3}`)
+        console.log(`4: ${num4}`)
+        console.log(`5: ${num5}`)
+        console.log(`6: ${num6}`)
+        console.log(`7: ${num7}`)
+
+        // let damage = (((num1)×威力×A/D)/50+2)×範囲補正×おやこあい補正×天気補正×急所補正×乱数補正×タイプ一致補正×相性補正×やけど補正×M×Mprotect
+
+        // タイプ一致補正計算後は五捨五超入する。相性補正計算後は切り捨てる。やけど補正計算後は五捨五超入する。M計算後は五捨五超入する。Mprotect計算後は五捨五超入する。
+
+
+        
         this.getCompatibility(move,this.opponentFightingPokemon)
 
-        this.opponentFightingPokemon.remainingHP-=move.power
+        dPokemon.remainingHP-= num7
       },
 
 
@@ -1791,6 +1946,19 @@
     }
   }
 
+  @keyframes movePress {
+    0% {
+      /* transform: scale(1)  ; */
+    }
+    50% {
+      /* transform: scale(0.4; */
+      transform: translate(3%,3%);
+    }
+    to {
+      /* transform: scale(1); */
+    }
+  }
+
   .miniBounce {
     animation: press 0.4s ease-in-out; 
   }
@@ -1810,6 +1978,10 @@
 
   .rightBounce{
     animation: rightPress 0.4s ease-in-out; 
+  }
+  
+  .moveBounce{
+    animation: movePress 0.4s ease-in-out; 
   }
 
   .overlay{
