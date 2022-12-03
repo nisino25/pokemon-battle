@@ -382,7 +382,7 @@
                 <div class="right">
                   
                   <!-- geneder -->
-                  <span>Lv.50</span>
+                  <span>Lv.50 </span>
                 </div>
 
               </div>
@@ -541,21 +541,31 @@
 
         <div class="controller-fighting" v-if="controllerMenu == 'fight'">
           <section class="moves">
-            <template v-for="(move,i) in myMoves" :key="i">
-              <div class="move" :style="getMoveStyle(i)" @click="chooseMove(move)">
-                <div class="top">
-                  {{move.type}},{{move.name}}
+            <template v-for="(move,i) in myMoves" :key="i" >
+              <div class="move" :style="getMoveStyle(i)" @click="chooseMove(move)" v-if="i<5">
+                <div class="move-contents">
+                  <div class="top">
+                    <a href="#" class="type-badge" :style="`background-color:${typeNameList[move.type].color}`">{{move.type}}</a>{{move.name}}
+                  </div>
+
+                  <div class="center">
+                    {{getCompatibility(move,opponentFightingPokemon)}},{{move.pp}}/{{move.pp}}
+                  </div>
+
+                  <div class="bottom">
+                     {{move.power}}, {{move.accuracy}}%
+                  </div>
+
                 </div>
-                <div class="center">
-                  {{move.pp}}/{{move.pp}},ばつぐん
-                </div>
-                <div class="bottom">
-                   {{move.power}}, {{move.accuracy}}%
-                </div>
+                
               </div>
+                
+        
+          
   
             </template>
           </section>
+
           
         </div>
       </section>
@@ -574,6 +584,7 @@
 <script>
   import {JapaneseNameList} from '../const/JapaneseName.js'
   import {typeNameList} from '../const/typeNameList'
+  import {JpnToEng} from '../const/JpnToEng'
 
   import {idList} from '../const/idList'
   import {moveList} from '../const/move'
@@ -592,6 +603,7 @@
         idList,
         moveList,
         moveLibrary,
+        JpnToEng,
 
 
         myParty: [],
@@ -951,7 +963,7 @@
         }
 
         fightingPokemon.isFightingNow = true
-        console.log(fightingPokemon)
+        // console.log(fightingPokemon)
 
         
         // list[num].isFightingNow = true
@@ -994,6 +1006,7 @@
 
         pokemon.isFightingNow = true
         pokemon.hasAppeared = true
+        this.showingController = false
       },
 
       chooseOpponentPokemon(pokemon){
@@ -1011,7 +1024,85 @@
         pokemon.hasAppeared = true
       },
 
+      getCompatibility(move,pokemon){
+        if(move.kind == '変化') return ''
+
+        if(pokemon.types.length == 1){
+          let aType = this.JpnToEng[move.type]?.name
+          let dType =pokemon.types[0].type.name
+          
+          if(this.compatibility[aType].strongAgainst.includes(dType)){
+            // console.log('not as much ')
+            return '⦾こうかばつぐん'
+          }else if(this.compatibility[aType].weakAgainst.includes(dType)){
+            // console.log('super effective ')
+            return `△いまひとつ`
+          }else if(this.compatibility[aType].resistantAgainst.includes(dType)){
+            return `✕こうかなし`
+          }else{
+            return `○こうかあり`
+          }
+        }
+
+        // console.log(pokemon.types)
+        let aType = this.JpnToEng[move.type]?.name
+        let dType =pokemon.types[0].type.name
+        let mathing = 1
+        
+        if(this.compatibility[aType].strongAgainst.includes(dType)){
+          console.log('⦾こうかばつぐん')
+          mathing =mathing * 2
+        }else if(this.compatibility[aType].weakAgainst.includes(dType)){
+          console.log('△いまひとつ')
+          mathing =mathing / 2
+        }else if(this.compatibility[aType].resistantAgainst.includes(dType)){
+          console.log('こうかなし ')
+          return `✕こうかなし`
+        }else{
+          console.log('wi')
+        }
+        console.log(`So far:${mathing};`)
+        
+
+        dType =pokemon.types[1].type.name
+        // dType =/ 'dragon'
+        if(this.compatibility[aType].strongAgainst.includes(dType)){
+          console.log('⦾こうかばつぐん')
+          mathing =mathing * 2
+        }else if(this.compatibility[aType].weakAgainst.includes(dType)){
+          console.log('△いまひとつ ')
+          mathing =mathing / 2
+        }else if(this.compatibility[aType].resistantAgainst.includes(dType)){
+          console.log('こうかなし ')
+          return `✕こうかなし`
+        }else{
+          console.log('wi')
+        }
+
+        console.log(mathing)
+        console.log('---------------')
+        console.log()
+
+        
+        if(mathing== 1){
+          return `○こうかあり`
+        }else if(mathing > 1){
+          // console.log('not as much ')
+          return '⦾こうかばつぐん'
+        }else if(mathing < 1){
+          // console.log('super effective ')
+          return `△いまひとつ`
+        }
+        
+
+        
+
+      },
+        
+
       chooseMove(move){
+        this.getCompatibility(move,this.opponentFightingPokemon)
+
         this.opponentFightingPokemon.remainingHP-=move.power
       },
 
@@ -1128,6 +1219,53 @@
           }
         }
         return false
+      },
+
+      compatibility(){
+        let obj = {
+          normal:{strongAgainst: [], weakAgainst: ['rock','steel'], resistantAgainst: ['ghost']},
+
+          fire:{strongAgainst: ['bug','steel','grass','ice'], weakAgainst: ['rock','fire','water','dragon'], resistantAgainst: []},
+
+          water:{strongAgainst: ['ground','rock','fire'], weakAgainst: ['water','grass','dragon',], resistantAgainst: []},
+          
+          electric:{strongAgainst: ['flying','water'], weakAgainst: ['grass','electric','dragon'], resistantAgainst: ['ground']},
+
+          grass:{strongAgainst: ['ground','rock','water'], weakAgainst: ['flying','poison','bug','steel','fire','grass','fragon'], resistantAgainst: []},
+
+          ice:{strongAgainst: ['flying','ground','grass','dragon'], weakAgainst: ['steel','fire','water','ice'], resistantAgainst: []},
+
+          fighting:{strongAgainst: ['normal','rock','steel', 'ice','dark'], weakAgainst: ['flying','posion','bug','psychic','fairy',], resistantAgainst: ['ghost']},
+
+          poison:{strongAgainst: ['grasss','fairy'], weakAgainst: ['poison','ground','rock','ghost',], resistantAgainst: ['steel']},
+
+          ground:{strongAgainst: ['poison','rock','steel','fire','electric'], weakAgainst: ['bug','grass'], resistantAgainst: ['flying']},
+
+          flying:{strongAgainst: ['fighting','bug','grass'], weakAgainst: ['rock','steel','electric'], resistantAgainst: []},
+
+          psychic:{strongAgainst: ['fighting','poison'], weakAgainst: ['steel','psychic'], resistantAgainst: ['dark']},
+
+          bug:{strongAgainst: ['grass','psychic','dark'], weakAgainst: ['fighting','flying','poison','ghost','steel','fire','fairy'], resistantAgainst: []},
+
+          rock:{strongAgainst: ['flying','bug','fire','ice'], weakAgainst: ['fighting','ground','steel'], resistantAgainst: []},
+
+          ghost:{strongAgainst: ['ghost','psychic'], weakAgainst: ['dark'], resistantAgainst: ['normal']},
+
+          dragon:{strongAgainst: ['dragon'], weakAgainst: ['steel'], resistantAgainst: ['fairy']},
+
+          dark:{strongAgainst: ['ghost','psychic'], weakAgainst: ['fighting','dark','fairy'], resistantAgainst: []},
+
+          steel:{strongAgainst: ['rock','ice','fairy'], weakAgainst: ['steel','fire','water','electric'], resistantAgainst: []},
+
+          fairy:{strongAgainst: ['fighting','dragon','dark'], weakAgainst: ['poison','steel','fire'], resistantAgainst: []},
+
+
+
+
+        }
+
+        return obj
+
       },
     },
 
@@ -1955,6 +2093,8 @@
   .controller-fighting .moves .move{
     position:absolute;
     pointer-events: auto;
+    overflow: auto;
+    
     /* left: 15%;
     top: 17%; */
     
@@ -1972,6 +2112,30 @@
     padding: 2px auto;
 
   }
+
+  .controller-fighting .moves .move .move-contents{
+    position:absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+
+    transform: translate(-50%,-50%);
+  }
+
+  
+
+  
+
+
+  .controller-fighting .type-badge{
+    color:white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    
+    font-weight: bold;
+    margin-left: 5px;
+  }
+
 
 
 
